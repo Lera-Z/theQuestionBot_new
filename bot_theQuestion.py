@@ -68,8 +68,8 @@ def get_vector(str):
     return total_vector
 #
 X = pickle.load(open( "/Users/Valeriya/Desktop/question_stop_word_dump.pkl", "rb" ))
-nbrs = pickle.load(open('/Users/Valeriya/Downloads/neighbors.pickle', 'rb'))
-df = pickle.load(open('/Users/Valeriya/Downloads/pickled_df.pickle', 'rb'))
+nbrs = pickle.load(open('neighbors.pickle', 'rb'))
+df = pickle.load(open('pickled_df.pickle', 'rb'))
 
 tg_token = '420371977:AAEtl9DfXPR0RCqdlunPcKMnKYSc5I7cC9M'
 
@@ -80,11 +80,21 @@ bot = telebot.TeleBot(tg_token)
 def handle_start(message):
    bot.send_message(message.chat.id, "Hi!")
 
+
 def search_questions(message):
     vec = get_vector(str(message))
     distances, indices = nbrs.kneighbors(vec)
     fin = df.iloc[indices[0],1]
     return fin.to_string().split('    ')[1][:36]
+
+
+
+@bot.message_handler(commands=['help'])
+def handle_help(question):
+    bot.send_message(question.chat.id, """
+/start - начать работу
+Введите вопрос, чтобы найти его на the Question
+""")
 
 @bot.message_handler(content_types=['text'])
 
